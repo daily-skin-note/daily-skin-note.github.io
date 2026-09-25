@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>肌管理</title>
-<link rel="apple-touch-icon" href="assets/20260921_apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="512x512" href="assets/20260921_icon-512.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png">
 <meta name="apple-mobile-web-app-title" content="肌管理">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -478,7 +478,7 @@ button.row:active{background:var(--surface-2)}
 <script>
 /* ============ 定数 ============ */
 const CONDITIONS = ['乾燥','ニキビ','赤み','テカり','かゆみ','毛穴','くすみ'];
-const LIFETAGS   = ['飲酒','ストレス強い','運動した','寝る30分前はスマホを見ない'];   // 「外食・脂っこい食事」は控えたい食べ物に置きかえた（過去の記録には残る）
+const LIFETAGS   = ['飲酒','ストレス強い','運動した','ピラティス','ヨガ','散歩','寝る30分前はスマホを見ない'];   // 「外食・脂っこい食事」は控えたい食べ物に置きかえた（過去の記録には残る）
 // 食事は「さあにぎやかにいただく」の10品目。○をつけるだけにして続けやすくする
 const FOOD_ICON = {
   'さ': `<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#5b4a51" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 16c4.5-6.5 11.5-8 17.5-3l7-4.5v15l-7-4.5c-6 5-13 3.5-17.5-3z" fill="#a9c9e6"/><path d="M14 12.5c2.2 2.2 2.2 5.8 0 8"/><circle cx="8.6" cy="15" r="1" fill="#5b4a51" stroke="none"/></svg>`,
@@ -743,6 +743,7 @@ const prevKey = k => { const d = parse(k); d.setDate(d.getDate()-1); return ymd(
 const fastOf = (key, l=LOGS[key]) => { const p = LOGS[prevKey(key)]; return (l && l.mealStart && p && p.mealEnd) ? spanMin(p.mealEnd, l.mealStart) : null; };
 // ─── いいことをした日 ───
 // 入力を増やさず、その日の記録から自動で数える。続いているかを見せるためのもの（肌スコアとの比較はしない）
+const MOVE_TAGS = ['運動した','ピラティス','ヨガ','散歩'];   // どれか1つでも押せば「運動した」日に数える
 const GOOD_THINGS = [
   {k:'vitc',    n:'ビタミンCサプリ',          test:(k,l)=> (l.supplements||[]).includes('vitc')},
   {k:'noAvoid', n:'控えたい食べ物なし',        test:(k,l)=> Array.isArray(l.avoidFoods) && l.avoidFoods.length===0},
@@ -750,7 +751,7 @@ const GOOD_THINGS = [
   {k:'fast16',  n:'16時間あけた',              test:(k,l)=> { const f = fastOf(k, l); return f!=null && f>=FAST_GOAL; }},
   {k:'water2l', n:'水を2L以上',                test:(k,l)=> (l.water||0)>=10},
   {k:'sleep7',  n:'7時間以上ねた',             test:(k,l)=> l.sleepHours!=null && l.sleepHours>=7},
-  {k:'move',    n:'運動した',                  test:(k,l)=> (l.lifeTags||[]).includes('運動した')},
+  {k:'move',    n:'運動した',                  test:(k,l)=> MOVE_TAGS.some(t=>(l.lifeTags||[]).includes(t))},
   {k:'noPhoneBed', n:'寝る30分前はスマホを見ない', test:(k,l)=> (l.lifeTags||[]).includes('寝る30分前はスマホを見ない')},
 ];
 const goodOf = (key, l=LOGS[key]) => l ? GOOD_THINGS.filter(g=>g.test(key,l)) : [];
